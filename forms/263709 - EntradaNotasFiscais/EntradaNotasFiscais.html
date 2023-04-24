@@ -1,0 +1,266 @@
+<html title="EntradaNotasFiscais">
+<head>
+	<link type="text/css" rel="stylesheet" href="/style-guide/css/fluig-style-guide.min.css"/>
+	<link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"/>
+	<link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css"/>
+	<link type="text/css" rel="stylesheet" href="/style-guide/css/fluig-style-guide-ratingstars.min.css"/>
+	<link type="text/css" rel="stylesheet" href="style.css"/>
+	
+	<script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/style-guide/js/fluig-style-guide.min.js"></script>
+	<script type="text/javascript" src="/style-guide/js/fluig-style-guide-ratingstars.min.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
+	
+	<!--  <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js" charset="utf-8"></script> -->
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+	<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+	<script src="https://code.jquery.com/jquery-migrate-3.3.2.js"></script>
+	<script src="https://code.jquery.com/jquery-migrate-3.3.2.min.js"></script> -->
+	
+	<script type="text/javascript" src="ScriptFaturamento.js" charset="utf-8"></script>
+	<script type="text/javascript" src="Functions.js" charset="utf-8"></script>
+	
+
+</head>
+<body>
+<div class="fluig-style-guide">
+<form name="form" role="form">
+	<div class="row">
+		<div class="col-md-12 statusFaturado alert alert-success">
+			<div class="form-group status">
+				<label for="resultadoMsg">STATUS DO PROCESSO: </label>
+				<input name="resultadoMsg" type="hidden" class="form-control" id="resultadoMsg">
+				<p id="msgRetorno"></p>
+			</div>
+		</div>
+	</div>
+	<div id="divInicio">
+		<table id="faturamento" class="display" style="width:100%">
+		<thead>
+		    <tr>
+		    	<th></th>
+		    	<th></th>
+		    	<th class="oculta">Coligada</th>
+		        <th class="oculta">ID</th>
+		        <th class="centro">Fornecedor</th>
+		        <th class="centro">CPF/CNPJ</th>
+		        <th class="centro">Número</th>
+		        <th class="centro">Local Estoque</th>
+				<th class="centro">Emissão</th>
+		        <th class="centro">Saldo</th>
+		        <th class="centro">Total</th>
+		        <th class="oculta"></th>
+		        <th class="oculta"></th>
+		        <th class="oculta"></th>
+		        <th class="oculta"></th>
+		        <th class="oculta"></th>
+		        <th class="oculta"></th>
+		        <th class="oculta"></th>
+		    </tr>
+		</thead>	
+		</table>
+		<div class="row botao">			
+			<button id="button-prosseguir" data-loading-text="Carregando . . ." type="button" class="btn btn-primary">
+				<span class="fluigicon fluigicon-test-refresh fluigicon-xs"></span>  Prosseguir</button>
+		</div>
+	</div>
+	<div id="divFaturar" style="display: none">
+		<div class="row">
+			<div class="col-md-3 form-group">
+				<label>Coligada:</label>
+				<input id="nomeColigada" name="nomeColigada" class="form-control" readonly/>
+			</div>
+			<div class="col-md-1 form-group">
+				<label>Filial:</label>
+				<input id="filial" name="filial" class="form-control" readonly/>
+			</div>
+			<div class="col-md-6 form-group">
+				<label>Fornecedor:</label>
+				<label id="labelListaFornecedores" style="display: none"> (para alterar, <a style="color: grey;" href='javascript: listaFornecedores();'>clique aqui</a>)</label>
+				<input id="nomeFornecedor" name="nomeFornecedor" class="form-control" readonly/>
+			</div>
+			<div class="col-md-2 form-group">
+				<label>CPF/CNPJ:</label>
+				<input id="cpfCnpj" name="cpfCnpj" class="form-control" readonly/>
+			</div>									
+		</div>
+		<div class="row">
+			<div class="col-md-2 form-group">
+				<label>Data Emissão:</label>
+				<input id="dataEmissao" name="dataEmissao" class="form-control" type="text" placeholder="00/00/0000"/>
+			</div>
+			<div class="col-md-2 form-group">
+				<label>Data Competência:</label>
+				<input id="dataCompetencia" name="dataCompetencia" class="form-control" type="text" placeholder="00/00/0000"/>
+			</div>
+			<div class="col-md-2 form-group">
+				<label>Série:</label>
+				<input id="serieMovimento" name="serieMovimento" class="form-control" type="text" maxlength="3" placeholder="000"/>
+			</div>
+			<div class="col-md-2 form-group">
+				<label>Nota Fiscal:</label>
+				<input id="numMovimento" name="numMovimento" class="form-control" type="text" maxlength="9" placeholder="000000000" />
+			</div>
+			<div class="col-md-4 form-group">
+				<label>Chave de Acesso:</label>
+				<input id="chaveAcesso" name="chaveAcesso" class="form-control" type="text" maxlength="44" placeholder="00000000000000000000000000000000000000000000"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 form-group">
+				<label>Forma de Pagamento:</label>
+				<select id="formaPgto" name="formaPgto" class="form-control"></select>
+			</div>	
+			<div class="col-md-4 form-group">
+				<label>Condição de Pagamento:</label>
+				<select	id="condicaoPgto" name="condicaoPgto" class="form-control"></select>
+			</div>
+			<div class="col-md-4 form-group">
+				<label>Movimento de Destino:</label>
+				<select id="geraMovimento" name="geraMovimento" class="form-control">
+					<option value="">Selecione o movimento . . . </option>
+					<option value="1.2.01">1.2.01 - NF Compra - Materiais/Peças/Uso e Consumo</option>
+					<option value="1.2.08">1.2.08 - NF Compra - Imobilizado</option>
+					<option value="1.2.24">1.2.24 - NF Compra - Manual</option>
+				</select>
+			</div>						
+		</div>
+		<div id="divTabela" class="form-group table-responsive">
+			<table id="tabelaItens" tablename="tabelaItens" noaddbutton="true" nodeletebutton="true" class="table table-hover">
+				<thead>
+					<tr>
+						<td class="col-md-1"><b>ID</b></td>
+						<td style="display:none;"><b>Item</b></td>
+						<td class="col-md-4"><b>Produto</b></td>
+						<td class="col-md-2"><b>Quantidade</b></td>
+						<td class="col-md-1"><b>Unidade</b></td>
+						<td class="col-md-2"><b>Preço Unit.</b></td>
+						<td class="col-md-2"><b>Preço Total</b></td>
+						<td style="display:none;"><b>Avalia Produto</b></td>	
+						<td style="display:none;"><b>Grupo Mercadoria</b></td>					
+					</tr>
+				</thead>
+				<tbody>
+					<tr detail="true" detailName="tabelaItensDetails">
+						<td class="col-md-1"><input class="form-control" type="text" name="IDRM" id="IDRM" readonly></td>
+						<td style="display:none;"><input class="form-control" type="text" name="NSEQ" id="NSEQ" readonly></td>
+						<td class="col-md-4"><input class="form-control" type="text" name="PRODUTO" id="PRODUTO" readonly></td>
+						<td class="col-md-2"><input class="form-control" type="text" name="QTDE" id="QTDE"></td>
+						<td class="col-md-1"><input class="form-control" type="text" name="UNIDADE" id="UNIDADE" readonly></td>
+						<td class="col-md-2"><input class="form-control" type="text" name="PRECOUNID" id="PRECOUNID" readonly></td>
+						<td class="col-md-2"><input class="form-control" type="text" name="PRECOTOTAL" id="PRECOTOTAL" readonly></td>	
+						<td style="display:none;"><input class="form-control" type="text" name="AVALIAPRODUTO" id="AVALIAPRODUTO" readonly></td>
+						<td style="display:none;"><input class="form-control" type="text" name="CODGRUPOPRODUTO" id="CODGRUPOPRODUTO" readonly></td>										
+					</tr>	
+				</tbody>						
+			</table>
+		</div>	
+		<div class="row total">
+		    <div class="col-md-10 form-group direita">
+		    	<h2>Total:</h2>
+		    </div>
+		    <div class="col-md-2 form-group">
+		    	<h2 id="labelTotal"></h2>	    	
+			</div>
+		</div>			
+		<div class="row botao">
+				<button id="button-fornecedor" type="button" class="btn btn-primary btnNF" style="display: none" data-fluig-modal-fornec>
+					<span class="flaticon flaticon-community-person icon-sm"></span>  Fornecedor</button>
+				<button id="button-dadosPag" type="button" class="btn btn-primary btnNF" style="display: none" data-fluig-modal-dadosPag>
+					<span class="flaticon flaticon-person-cost icon-sm"></span>  Dados Pagamento</button>
+				<button id="button-avaliar" type="button" class="btn btn-primary btnNF" data-fluig-modal>
+					<span class="fluigicon fluigicon-manual-scores fluigicon-xs"></span>  Avaliar</button>
+				<button id="button-faturar" type="button" class="btn btn-primary btnNF">
+					<span class="fluigicon fluigicon-money fluigicon-xs"></span>  Inserir NF</button>
+		</div>
+	</div>
+	<div id="divLancamento" style="display: none">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<div class="row panel-title">
+					<div class="col-md-1"><h4 id="codigoForn"></h4></div>
+					<div class="col-md-9"><h4 id="tituloForn"></h4></div>
+					<div class="col-md-2"><h4 id="cnpjForn"></h4></div>
+				</div>        		
+    		</div>
+		</div>
+	    <div id="divTabelaLan" class="form-group table-responsive">
+			<table id="tabelaLanItens" tablename="tabelaLanItens" noaddbutton="true" nodeletebutton="true" class="table table-hover">
+				<thead>
+					<tr>
+						<td class="col-md-1"><b>Ref</b></td>
+						<td class="col-md-2"><b>Data Vencimento</b></td>
+						<td class="col-md-2"><b>Data Prev. Baixa</b></td>
+						<td class="col-md-2"><b>Valor</b></td>
+						<td class="col-md-5 codigoBarras"><b>Código Barras/IPTE</b></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr detail="true" detailName="tabelaLanItensDetails">
+						<td class="col-md-1"><input class="form-control" type="text" name="IDLAN" id="IDLAN" readonly></td>
+						<td class="col-md-2"><input class="form-control" type="text" name="DATAVENC" id="DATAVENC"></td>
+						<td class="col-md-2"><input class="form-control" type="text" name="DATAPREV" id="DATAPREV"></td>
+						<td class="col-md-2"><input class="form-control" type="text" name="VALOR" id="VALOR" readonly></td>	
+						<td class="col-md-3"><input class="form-control" type="text" name="CODIGOBARRA" id="CODIGOBARRA" maxlength="48" placeholder="000000000000000000000000000000000000000000000"></td>
+					</tr>	
+				</tbody>						
+			</table>
+		</div>
+		<div class="row total">
+		    <div class="col-md-6 form-group direita">
+		    	<h2>Total:</h2>		
+		    </div>
+		    <div class="col-md-6 form-group">    
+		    	<h2 id="labelTotal2"></h2>	    	
+			</div>
+		</div>			
+	    <div class="row botaoAtualizar">
+			<button id="button-lancamento" data-loading-text="Carregando . . ." type="button" class="btn btn-primary">
+				<span class="fluigicon fluigicon-money fluigicon-xs"></span>  Atualizar</button>
+		</div>	    
+	</div>
+	<div id="divHidden" style="display: none">
+	    <input id="atividade" name="atividade" type="text"/>	
+		<input id="coligada" name="coligada" type="text"/>
+		<input id="codColForn" name="codColForn" type="text"/>
+		<input id="tipoOrigem" name="tipoOrigem" type="text"/>
+		<input id="codForn" name="codForn" type="text"/>
+		<input id="codTrocaForn" name="codTrocaForn" type="text"/>
+		<input id="nomeTrocaForn" name="nomeTrocaForn" type="text"/>
+		<input id="cnpjTrocaForn" name="cnpjTrocaForn" type="text"/>
+		<input id="codPgto" name="codPgto" type="text"/>
+		<input id="nomePgto" name="nomePgto" type="text"/>
+		<input id="codFormPgto" name="codFormPgto" type="text"/>
+		<input id="nomeFormPgto" name="nomeFormPgto" type="text"/>
+		<input id="usuario" name="usuario" type="text">
+		<input id="total" name="total" type="text"/>
+		<input id="valorTotal" name="valorTotal" type="text"/>
+		<input id="qtdeParcelas" name="qtdeParcelas" type="text"/>
+		<input id="arrMovs" name="arrMovs" type="text">
+		<input id="idmovNF" name="idmovNF" type="text">
+		<input id="idPagForn" name="idPagForn" type="text" value="0">
+		<input id="descricaoPag" name="descricaoPag" type="text">
+		<input id="bancoPag" name="bancoPag" type="text">
+		<input id="agenciaPag" name="agenciaPag" type="text">
+		<input id="digAgenciaPag" name="digAgenciaPag" type="text">
+		<input id="contaPag" name="contaPag" type="text">
+		<input id="digContaPag" name="digContaPag" type="text">
+		<input id="tipoPag" name="tipoPag" type="text">
+		<input id="favorecidoPag" name="favorecidoPag" type="text">
+		<input id="cpfCnpjPag" name="cpfCnpjPag" type="text">
+		<input id="atualizaBancoForn" name="atualizaBancoForn" type="text" value="0">
+		<input id="avaliacaoA" name="avaliacaoA" type="text">
+		<input id="avaliacaoB" name="avaliacaoB" type="text">
+		<input id="avaliacaoC" name="avaliacaoC" type="text">
+		<input id="avaliacaoD" name="avaliacaoD" type="text">
+		<input id="justificativa" name="justificativa" type="text">
+		<input id="mensagemErro" name="mensagemErro" type="text">
+	</div>	
+</form>
+</div>
+</body>
+</html>

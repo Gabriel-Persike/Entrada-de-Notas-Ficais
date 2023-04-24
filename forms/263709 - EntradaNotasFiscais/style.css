@@ -1,0 +1,75 @@
+#workflowActions.btn-group {
+	visibility: hidden !important;
+}
+
+#workflowActions > button:first-child {
+	visibility: hidden !important;
+}
+
+.fluig-style-guide .row {
+    margin-right: -8px !important;
+    margin-left: -15px !important;
+}
+
+td.details-control {
+    background: url('images/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('images/details_close.png') no-repeat center center;
+}
+
+.botao {
+	/*margin-bottom: 20px; 
+	margin-top: 30px;*/
+	margin-bottom: 15px; 
+	margin-top: 0px; 
+	text-align: center;
+}
+
+.botaoAtualizar {
+	margin-bottom: 15px; 
+	margin-top: 0px; 
+	text-align: center;
+}
+
+.total {
+	font-size: x-large !important;
+}
+
+.direita {
+	text-align: right;
+}
+
+.centro {
+	text-align: center !important;
+}
+
+.status {
+	text-align: center;
+}
+
+.oculta {
+	display: none;
+}
+
+input#valorTotal {
+	font-size: x-large !important;
+	margin-top: -20px;
+}
+
+.panel-body {
+    padding: 10px 10px 0px 10px !important;
+}
+
+.panel-heading {
+    padding: 5px 25px 5px 25px !important;
+}
+.btnNF {
+	width: 170px !important;
+}
+label#labelListaFornecedores {
+	margin-left:10px;
+	color:grey;
+}
+
